@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Pause and Overlay</title>
+    <style>
+        #overlay {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        #overlay1 {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        #video-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <video id="video" controls>
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="overlay">
+            <p></p>
+            <button onclick="selectOption('Option 1')">Jawaban a</button>
+            <button onclick="selectOption('Option 2')">Jawaban b</button>
+            <button onclick="selectOption('Option 2')">Jawaban c</button>
+            <button onclick="selectOption('Option 2')">Jawaban d</button>
+            <button onclick="selectOption('Option 2')">Jawaban e</button>
+        </div>
+
+        <div id="overlay1">
+            <p></p>
+            <button onclick="selectOption('Option 1')">Jawaban a</button>
+            <button onclick="selectOption('Option 2')">Jawaban b</button>
+            <button onclick="selectOption('Option 3')">Jawaban c</button>
+            <button onclick="selectOption('Option 4')">Jawaban d</button>
+            <button onclick="selectOption('Option 5')">Jawaban e</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const overlay = document.getElementById('overlay');
+        const overlay1 = document.getElementById('overlay1');
+
+        // Pause the video at 10 seconds and show the overlay
+        video.addEventListener('timeupdate', function () {
+            if (video.currentTime >= 3 && video.currentTime <= 3.3 && !video.paused) {
+                video.pause();
+                showOverlay();
+            }
+        });
+
+        video.addEventListener('timeupdate', function () {
+            if (video.currentTime >= 5 && video.currentTime <= 5.3 && !video.paused) {
+                video.pause();
+                showOverlay1();
+            }
+        });
+
+        function showOverlay() {
+            overlay.style.display = 'block';
+        }
+
+        function showOverlay1() {
+            overlay1.style.display = 'block';
+        }
+
+        function hideOverlay() {
+            overlay.style.display = 'none';
+        }
+
+        function selectOption(option) {
+            console.log('User selected:', option);
+            hideOverlay();
+            video.play();
+        }
+    </script>
+</body>
+</html>
