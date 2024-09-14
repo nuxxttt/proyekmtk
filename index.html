@@ -283,6 +283,10 @@ async function getBotResponse(message) {
         body: JSON.stringify({
             messages: [
                 {
+                    role: 'system',
+                    content: 'anda adalah seorang guru matematika, anda diperintahkan untuk mengajar matematika yang baik dan benar, jika anda ditanya selain matematika, anda akan menolaknya dengan baik',
+                },
+                {
                     role: 'user',
                     content: message + 'hanya dalam kurang dari 90 kata dan pastikan seluruhnya berbahasa indonesia sederhana yang mudah dipahami',
                 }
