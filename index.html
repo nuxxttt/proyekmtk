@@ -258,10 +258,11 @@ function addMessage(message, isUser = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 // 26fc1d59eemshf42427b24d366e5p1cbde9jsn4e909cdc8ba6
+// 24059417d7msh069dee2d3742accp1b19b2jsn837b1a464d54
 
 // Fetch bot response from API
 async function getBotResponse(message) {
-    const url = 'https://chatgpt-42.p.rapidapi.com/gpt4';
+    const url = 'https://chatgpt-42.p.rapidapi.com/conversationgpt4';
     const options = {
         method: 'POST',
         headers: {
@@ -273,7 +274,7 @@ async function getBotResponse(message) {
             messages: [
                 {
                     role: 'user',
-                    content: message
+                    content: message + 'hanya dalam kurang dari 90 kata dan pastikan seluruhnya berbahasa indonesia sederhana yang mudah dipahami',
                 }
             ],
             web_access: false
