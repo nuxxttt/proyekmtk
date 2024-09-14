@@ -7,6 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.6.12/plyr.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         body {
             width: 100%;
@@ -84,7 +87,7 @@
                     </div>
                     <div class="p-4">
                         <h1 class="text-2xl font-bold mb-2">Demo pertama</h1>
-                        <p id="score" class="text-lg">Score: 0</p>
+                        <p id="score" class="text-lg hidden">Skor: 0</p>
                         <br>
                         <hr>
                         <br>
@@ -152,8 +155,8 @@
                         <h2 class="text-xl font-bold mb-4">Tanyakan disini</h2>
                         <div id="chatMessages" class=" p-4 rounded-lg mb-4"></div>
                         <div class="flex">
-                            <input type="text" id="userInput" class="flex-grow border rounded-l px-4 py-2" placeholder="Type your message...">
-                            <button id="sendButton" class="bg-blue-500 text-white px-4 py-2 rounded-r">Send</button>
+                            <input type="text" id="userInput" class="flex-grow border rounded-l px-4 py-2" placeholder="Ajukan Pertanyaan...">
+                            <button id="sendButton" class="bg-blue-500 text-white px-4 py-2 rounded-r">Krim</button>
                         </div>
                     </div>
                 </div>
@@ -237,6 +240,7 @@
             } else if (!isCorrect) {
                 continueBtnn.classList.remove('hidden');
             }
+            scoreElement.classList.remove('hidden')
         }
 
         continueBtn.addEventListener('click', () => {
@@ -261,84 +265,88 @@ const sendButton = document.getElementById('sendButton');
 
 // Add message to chat window
 function addMessage(message, isUser = false) {
-    const messageElement = document.createElement('div');
-    messageElement.className = `mb-2 p-2 rounded ${isUser ? 'bg-blue-100 text-right' : 'bg-gray-200'}`;
-    messageElement.textContent = message;
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-// 26fc1d59eemshf42427b24d366e5p1cbde9jsn4e909cdc8ba6
-// 24059417d7msh069dee2d3742accp1b19b2jsn837b1a464d54
+            const messageElement = document.createElement('div');
+            messageElement.className = `mb-2 p-2 rounded ${isUser ? 'bg-blue-100 text-right' : 'bg-gray-200'}`;
+            messageElement.innerHTML = message; // Changed from textContent to innerHTML
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
-// Fetch bot response from API
-async function getBotResponse(message) {
-    const url = 'https://chatgpt-42.p.rapidapi.com/conversationgpt4';
-    const options = {
-        method: 'POST',
-        headers: {
-            'x-rapidapi-key': '26fc1d59eemshf42427b24d366e5p1cbde9jsn4e909cdc8ba6',
-            'x-rapidapi-host': 'chatgpt-42.p.rapidapi.com',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            messages: [
-                {
-                    role: 'system',
-                    content: 'anda adalah seorang guru matematika, anda diperintahkan untuk mengajar matematika yang baik dan benar, jika anda ditanya selain matematika, anda akan menolaknya dengan baik',
-                },
-                {
-                    role: 'user',
-                    content: message + 'hanya dalam kurang dari 90 kata dan pastikan seluruhnya berbahasa indonesia sederhana yang mudah dipahami',
-                }
-            ],
-            web_access: false
-        })
-    };
-
-    try {
-        const response = await fetch(url, options);
-        const result = await response.json();
-        console.log(result.result);
-        return result.result;
-    } catch (error) {
-        console.error(error);
-        return "Sorry, I couldn't process your request.";
-    }
-}
-
-// Send message when the user clicks or presses Enter
-async function sendMessage() {
-    const message = userInput.value.trim();
-    if (message) {
-        addMessage(message, true);
-        userInput.value = '';
-
-        // Show loading indicator
-        const loadingElement = document.createElement('div');
-        loadingElement.className = 'mb-2 p-2 rounded bg-gray-200';
-        loadingElement.textContent = 'Thinking...';
-        chatMessages.appendChild(loadingElement);
-
-        try {
-            // Get bot response from API
-            const botResponse = await getBotResponse(message);
-            
-            // Remove loading indicator
-            chatMessages.removeChild(loadingElement);
-            
-            // Add bot response
-            addMessage(botResponse);
-        } catch (error) {
-            console.error('Error getting bot response:', error);
-            
-            // Remove loading indicator
-            chatMessages.removeChild(loadingElement);
-            
-            // Add error message
-            addMessage('Sorry, I encountered an error while processing your request.');
+            // Render LaTeX in the new message
+            MathJax.typesetPromise([messageElement]).catch((err) => console.log('MathJax error:', err));
         }
-    }
+
+        async function getBotResponse(message) {
+            const url = 'https://chatgpt-42.p.rapidapi.com/conversationgpt4';
+            const options = {
+                method: 'POST',
+                headers: {
+                    'x-rapidapi-key': '24059417d7msh069dee2d3742accp1b19b2jsn837b1a464d54',
+                    'x-rapidapi-host': 'chatgpt-42.p.rapidapi.com',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'Anda adalah seorang guru matematika. Anda diperintahkan untuk mengajar matematika dengan baik dan benar. Jika ditanya selain matematika, Anda akan menolaknya dengan sopan. Gunakan LaTeX untuk menampilkan persamaan matematika.',
+                        },
+                        {
+                            role: 'user',
+                            content: message + ' Jawab dalam kurang dari 90 kata dan pastikan seluruhnya berbahasa Indonesia sederhana yang mudah dipahami. Gunakan format LaTeX untuk persamaan matematika.',
+                        }
+                    ],
+                    web_access: false
+                })
+            };
+
+            try {
+    const response = await fetch(url, options);
+    console.log(options);
+    const result = await response.json();
+    
+    // Replace content between dollar signs with <b>content</b>
+    const formattedResult = result.result.replace(/\$(.*?)\$/g, '<b>$1</b>');
+    
+    console.log(formattedResult);
+    return formattedResult;
+} catch (error) {
+    console.error(error);
+    return "Maaf, saya tidak dapat memproses permintaan Anda saat ini.";
 }
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                userInput.value = '';
+
+                // Show loading indicator
+                const loadingElement = document.createElement('div');
+                loadingElement.className = 'mb-2 p-2 rounded bg-gray-200';
+                loadingElement.textContent = 'Sedang berpikir...';
+                chatMessages.appendChild(loadingElement);
+
+                try {
+                    // Get bot response from API
+                    const botResponse = await getBotResponse(message);
+                    
+                    // Remove loading indicator
+                    chatMessages.removeChild(loadingElement);
+                    
+                    // Add bot response
+                    addMessage(botResponse);
+                } catch (error) {
+                    console.error('Error getting bot response:', error);
+                    
+                    // Remove loading indicator
+                    chatMessages.removeChild(loadingElement);
+                    
+                    // Add error message
+                    addMessage('Maaf, terjadi kesalahan saat memproses permintaan Anda.');
+                }
+            }
+        }
 
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => {
